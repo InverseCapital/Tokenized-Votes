@@ -20,7 +20,7 @@ async function main() {
   await myTokenContract.deployed();
 
   console.log(
-    "Deployad MyToken contract at address: ",
+    "Deployed MyToken contract at address: ",
     myTokenContract.address
   );
 
@@ -33,7 +33,7 @@ async function main() {
   await customBallotContractFactory.deployed();
 
   console.log(
-    "Deployad contract at address: ",
+    "Deployed CustomBallot contract at address: ",
     customBallotContractFactory.address
   );
 }
