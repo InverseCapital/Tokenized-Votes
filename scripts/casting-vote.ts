@@ -1,36 +1,22 @@
 import { ethers } from "hardhat";
 import "dotenv/config";
-import { getContract } from "../utils/contracts";
-import { getProvider } from "../utils/providers";
-import * as customBallotJson from "../artifacts/contracts/CustomBallot.sol/CustomBallot.json";
-import { CustomBallot } from "../typechain";
+
+import { getBallotContract } from "../utils/contracts";
 
 async function main() {
-  console.log("Casting vote...");
-  const argInput = process.argv.slice(2);
-  const [customBallotAddress, userAddress] = argInput;
+  const accounts = await ethers.getSigners();
+  const ballotContract = getBallotContract();
 
-  console.log("input", customBallotAddress, userAddress);
+  console.log("Checking voting power...");
+  console.log("Voting with account: ", accounts[0].address);
 
-  const wallet = new ethers.Wallet(process.env.PRIVATE_KEY || "");
-  const provider = getProvider();
-  const signer = wallet.connect(provider);
+  const votingPower = await ballotContract.votingPower();
+  console.log("Voting power: ", ethers.utils.formatEther(votingPower));
 
-  const myTokenContract = getContract<CustomBallot>(
-    customBallotAddress,
-    customBallotJson.abi,
-    signer
-  );
+  const voteTx = await ballotContract.vote(0, ethers.utils.parseEther("10"));
+  await voteTx.wait();
 
-  console.log("checking if we have voting power ...!");
-  const votingPower = await myTokenContract.votingPower();
-  console.log("voting power: ", votingPower);
-
-  console.log("Started voting ...!");
-  const mintTx = await myTokenContract.vote(0, ethers.utils.parseEther("50"));
-  await mintTx.wait();
-
-  console.log("vote transaction: ", mintTx);
+  console.log("Vote transaction hash: ", voteTx.hash);
 }
 
 main().catch((error) => {

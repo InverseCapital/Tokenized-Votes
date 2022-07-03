@@ -1,20 +1,10 @@
-import { Contract, ethers } from "ethers";
+import { ethers } from "ethers";
 import "dotenv/config";
 
-import * as ballotJson from "../artifacts/contracts/CustomBallot.sol/CustomBallot.json";
-import { CustomBallot } from "../typechain";
+import { getBallotContract } from "../utils/contracts";
 
 async function main() {
-  const argInput = process.argv.slice(2);
-  const ballotContractAddress = argInput[0];
-
-  const provider = ethers.providers.getDefaultProvider("ropsten");
-
-  const ballotContract = new Contract(
-    ballotContractAddress,
-    ballotJson.abi,
-    provider
-  ) as CustomBallot;
+  const ballotContract = getBallotContract();
 
   const proposals = await ballotContract.getProposals();
 

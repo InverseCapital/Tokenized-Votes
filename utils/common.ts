@@ -1,7 +1,7 @@
 import { ethers } from "ethers";
 
 export function convertStringArrayToBytes32(array: string[]) {
-  const bytes32Array = [];
+  const bytes32Array: string[] = [];
   for (let index = 0; index < array.length; index++) {
     bytes32Array.push(ethers.utils.formatBytes32String(array[index]));
   }

@@ -1,33 +1,17 @@
 import { ethers } from "hardhat";
 import "dotenv/config";
-import { MyToken } from "../typechain";
-import * as myTokenJson from "../artifacts/contracts/MyToken.sol/MyToken.json";
-import { getContract } from "../utils/contracts";
-import { getProvider } from "../utils/providers";
+import { getTokenContract } from "../utils/contracts";
 
 async function main() {
-  console.log("Minting tokens...");
-  const argInput = process.argv.slice(2);
-  const [myTokenAddress, userAddress] = argInput;
   const accounts = await ethers.getSigners();
+  const myTokenContract = getTokenContract();
 
-  console.log("input", myTokenAddress, userAddress);
+  console.log(`Delegating tokens to: `, accounts[0].address);
 
-  const wallet = new ethers.Wallet(process.env.PRIVATE_KEY || "");
-  const provider = getProvider();
-  const signer = wallet.connect(provider);
+  const delegateTx = await myTokenContract.delegate(accounts[0].address);
+  await delegateTx.wait();
 
-  const myTokenContract = getContract<MyToken>(
-    myTokenAddress,
-    myTokenJson.abi,
-    signer
-  );
-
-  console.log("Delegating vote...!");
-  const mintTx = await myTokenContract.delegate(accounts[0].address);
-  await mintTx.wait();
-
-  console.log("delegated vote transaction: ", mintTx);
+  console.log("Delegate vote transaction hash: ", delegateTx.hash);
 }
 
 main().catch((error) => {

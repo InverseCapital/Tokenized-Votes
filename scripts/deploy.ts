@@ -1,40 +1,36 @@
 import { ethers } from "hardhat";
 import "dotenv/config";
 
+import { convertStringArrayToBytes32 } from "../utils/common";
+
 const PROPOSALS = ["Proposal 1", "Proposal 2", "Proposal 3"];
 
-function convertStringArrayToBytes32(array: string[]) {
-  const bytes32Array = [];
-  for (let index = 0; index < array.length; index++) {
-    bytes32Array.push(ethers.utils.formatBytes32String(array[index]));
-  }
-  return bytes32Array;
-}
-
 async function main() {
-  console.log("Deploying....");
+  const accounts = await ethers.getSigners();
+
+  console.log("Using address: ", accounts[0].address);
 
   // Deploy token contract
-  const tokenContractFactory = await ethers.getContractFactory("MyToken");
-  const myTokenContract = await tokenContractFactory.deploy();
-  await myTokenContract.deployed();
+  // const tokenContractFactory = await ethers.getContractFactory("MyToken");
+  // const myTokenContract = await tokenContractFactory.deploy();
+  // await myTokenContract.deployed();
 
-  console.log(
-    "Deployed MyToken contract at address: ",
-    myTokenContract.address
-  );
+  // console.log(
+  //   "Deployed MyToken contract at address: ",
+  //   myTokenContract.address
+  // );
 
-  // Deploying CustomBallon Contract
-  const contractFactory = await ethers.getContractFactory("CustomBallot");
-  const customBallotContractFactory = await contractFactory.deploy(
+  // Deploying CustomBallot Contract
+  const ballotContractFactory = await ethers.getContractFactory("CustomBallot");
+  const ballotContract = await ballotContractFactory.deploy(
     convertStringArrayToBytes32(PROPOSALS),
-    myTokenContract.address
+    "0x7d409B232bBe6D51056C289983c4B2B343A498D8"
   );
-  await customBallotContractFactory.deployed();
+  await ballotContract.deployed();
 
   console.log(
     "Deployed CustomBallot contract at address: ",
-    customBallotContractFactory.address
+    ballotContract.address
   );
 }
 
