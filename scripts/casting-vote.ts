@@ -7,8 +7,8 @@ async function main() {
   const accounts = await ethers.getSigners();
   const ballotContract = getBallotContract();
 
-  console.log("Checking voting power...");
   console.log("Voting with account: ", accounts[0].address);
+  console.log("Checking voting power...");
 
   const votingPower = await ballotContract.votingPower();
   console.log("Voting power: ", ethers.utils.formatEther(votingPower));
