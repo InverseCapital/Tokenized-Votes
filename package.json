@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "hardhat test"
+    "test": "hardhat test",
+    "deploy:local": "yarn hardhat run ./scripts/deploy.ts",
+    "deploy:ropsten": "yarn hardhat run ./scripts/deploy.ts --network ropsten",
+    "compile": "yarn hardhat compile"
   },
   "author": "",
   "license": "ISC",
