@@ -2,6 +2,7 @@ import { ethers } from "hardhat";
 import "dotenv/config";
 
 import { convertStringArrayToBytes32 } from "../utils/common";
+import { deployContract } from "../utils/contracts";
 
 const PROPOSALS = ["Proposal 1", "Proposal 2", "Proposal 3"];
 
@@ -10,23 +11,29 @@ async function main() {
 
   console.log("Using address: ", accounts[0].address);
 
-  // Deploy token contract
-  // const tokenContractFactory = await ethers.getContractFactory("MyToken");
-  // const myTokenContract = await tokenContractFactory.deploy();
-  // await myTokenContract.deployed();
+  // Check signer balance
+  const balanceBN = await accounts[0].getBalance();
+  const balance = Number(ethers.utils.formatEther(balanceBN));
 
-  // console.log(
-  //   "Deployed MyToken contract at address: ",
-  //   myTokenContract.address
-  // );
+  console.log(`Wallet balance: ${balance}`);
+  if (balance < 0.01) {
+    throw new Error("Not enough ether");
+  }
+
+  // Deploy token contract
+  const myTokenContract = await deployContract("MyToken");
+
+  console.log(
+    "Deployed MyToken contract at address: ",
+    myTokenContract.address
+  );
 
   // Deploying CustomBallot Contract
-  const ballotContractFactory = await ethers.getContractFactory("CustomBallot");
-  const ballotContract = await ballotContractFactory.deploy(
+  const ballotContract = await deployContract(
+    "CustomBallot",
     convertStringArrayToBytes32(PROPOSALS),
-    "0x7d409B232bBe6D51056C289983c4B2B343A498D8"
+    process.env.TOKEN_CONTRACT_ADDRESS || ""
   );
-  await ballotContract.deployed();
 
   console.log(
     "Deployed CustomBallot contract at address: ",

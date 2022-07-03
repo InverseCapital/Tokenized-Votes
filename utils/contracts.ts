@@ -1,4 +1,5 @@
-import { Contract, ContractInterface, ethers } from "ethers";
+import { Contract, ContractInterface } from "ethers";
+import { ethers } from "hardhat";
 
 import { getProvider } from "./providers";
 import * as customBallotJson from "../artifacts/contracts/CustomBallot.sol/CustomBallot.json";
@@ -32,4 +33,15 @@ export function getTokenContract(withSigner = true) {
     myTokenJson.abi,
     withSigner
   );
+}
+
+export async function deployContract(contractName: string, ...args: unknown[]) {
+  // Get contract factory
+  const contractFactory = await ethers.getContractFactory(contractName);
+
+  // Deploy contract
+  const contract = await contractFactory.deploy(...args);
+  await contract.deployed();
+
+  return contract;
 }
