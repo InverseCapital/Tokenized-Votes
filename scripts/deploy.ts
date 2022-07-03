@@ -1,29 +1,43 @@
-// We require the Hardhat Runtime Environment explicitly here. This is optional
-// but useful for running the script in a standalone fashion through `node <script>`.
-//
-// When running the script with `npx hardhat run <script>` you'll find the Hardhat
-// Runtime Environment's members available in the global scope.
 import { ethers } from "hardhat";
+import "dotenv/config";
 
-async function main() {
-  // Hardhat always runs the compile task when running scripts with its command
-  // line interface.
-  //
-  // If this script is run directly using `node` you may want to call compile
-  // manually to make sure everything is compiled
-  // await hre.run('compile');
+const PROPOSALS = ["Proposal 1", "Proposal 2", "Proposal 3"];
 
-  // We get the contract to deploy
-  const Greeter = await ethers.getContractFactory("Greeter");
-  const greeter = await Greeter.deploy("Hello, Hardhat!");
-
-  await greeter.deployed();
-
-  console.log("Greeter deployed to:", greeter.address);
+function convertStringArrayToBytes32(array: string[]) {
+  const bytes32Array = [];
+  for (let index = 0; index < array.length; index++) {
+    bytes32Array.push(ethers.utils.formatBytes32String(array[index]));
+  }
+  return bytes32Array;
 }
 
-// We recommend this pattern to be able to use async/await everywhere
-// and properly handle errors.
+async function main() {
+  console.log("Deploying....");
+
+  // Deploy token contract
+  const tokenContractFactory = await ethers.getContractFactory("MyToken");
+  const myTokenContract = await tokenContractFactory.deploy();
+  await myTokenContract.deployed();
+
+  console.log(
+    "Deployad MyToken contract at address: ",
+    myTokenContract.address
+  );
+
+  // Deploying CustomBallon Contract
+  const contractFactory = await ethers.getContractFactory("CustomBallot");
+  const customBallotContractFactory = await contractFactory.deploy(
+    convertStringArrayToBytes32(PROPOSALS),
+    myTokenContract.address
+  );
+  await customBallotContractFactory.deployed();
+
+  console.log(
+    "Deployad contract at address: ",
+    customBallotContractFactory.address
+  );
+}
+
 main().catch((error) => {
   console.error(error);
   process.exitCode = 1;
