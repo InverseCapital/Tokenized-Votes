@@ -32,6 +32,9 @@ contract CustomBallot {
     IERC20Votes public voteToken;
 
     /// @notice block number of when the voting power was snapshotted
+    /// @dev the reference will be the block number of when the contract is deployed.
+    ///      So any change in the voting power that happens after the deployment,
+    ///      won't be considered for the ballot.
     uint256 public referenceBlock;
 
     /// @param proposalNames names of the proposals that can be voted
