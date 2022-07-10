@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity >=0.7.0 <0.9.0;
 
+/// @dev light-weight interface of ERC20Votes with the only function that is used by the ballot contract.
+///      By using this light weight version we can reduce the size of the bytecode produced for the ballot contract
 interface IERC20Votes {
     function getPastVotes(address, uint256) external view returns (uint256);
 }
